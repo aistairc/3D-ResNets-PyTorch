@@ -92,6 +92,7 @@ def get_opts():
     p.add_argument('--mocap_labels', type=str, default=None)
     p.add_argument('--blacklist', type=str, default=None)
     p.add_argument('--check', action='store_true')
+    p.add_argument('--get_n_classes', action='store_true')
     return p.parse_args()
 
 
@@ -122,13 +123,18 @@ if __name__ == '__main__':
 
     if opt.check:
         stat(s)
+        print('------------------------------')
         print('labels:', list(s.keys()))
         print('blacklist:', opt.blacklist)
         print('# of classes:', len(s.keys()))
         print('# of instances:', len(sum(s.values(), [])))
+    elif opt.get_n_classes:
+        print(len(s.keys()))
     else:
         a = make_annotation(s)
 
+        print('annotation file (json) has been generated')
+        print('-'*60)
         print('# of classes:', len(a['labels']))
         print('# of instances:', len(a['database']))
 
@@ -136,4 +142,4 @@ if __name__ == '__main__':
         with open(dst, 'w') as f:
             json.dump(a, f, indent=4)
         print('filepath:', os.path.abspath(dst))
-        print('done!')
+        print()
