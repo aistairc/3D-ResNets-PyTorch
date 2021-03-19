@@ -1,7 +1,11 @@
 #!/bin/bash
 
-#$ -l rt_F=1
+#$ -l rt_G.large=1
+#$ -l h_rt=72:00:00
 #$ -j y
+#$ -m a
+#$ -m b
+#$ -m e
 #$ -cwd
 
 source /etc/profile.d/modules.sh

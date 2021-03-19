@@ -78,8 +78,12 @@ def select_videos(opt):
 
 
 def stat(s):
-    for cls, ins in sorted(s.items(), key=lambda x: x[0]):
-        print(f'{cls}: {len(ins)}')
+    tmp = {}
+    for k, v in s.items():
+        tmp.setdefault(k, len(v))
+
+    for k, v in sorted(tmp.items(), key=lambda x: x[1], reverse=True):
+        print(f'{k}: {v}')
 
 
 def get_opts():
@@ -99,31 +103,31 @@ def get_opts():
 if __name__ == '__main__':
     opt = get_opts()
 
-    mocap_labels_path = os.path.join(opt.root, 'mocap_labels.json')
+    # mocap_labels_path = os.path.join(opt.root, 'mocap_labels.json')
+    # if opt.mocap_labels:
+    #     mocap_labels_path = opt.mocap_labels
+
+    # blacklist_path = os.path.join(opt.root, 'blacklist.txt')
+    # if opt.blacklist:
+    #     blacklist_path = opt.blacklist
+
     if opt.mocap_labels:
-        mocap_labels_path = opt.mocap_labels
-
-    blacklist_path = os.path.join(opt.root, 'blacklist.txt')
-    if opt.blacklist:
-        blacklist_path = opt.blacklist
-
-    if os.path.exists(mocap_labels_path):
-        with open(mocap_labels_path, 'r') as f:
+        with open(opt.mocap_labels, 'r') as f:
             opt.mocap_labels = json.load(f)
-    else:
-        opt.mocap_labels = None
+    # else:
+    #     opt.mocap_labels = None
 
-    if os.path.exists(blacklist_path):
-        with open(blacklist_path, 'r') as f:
+    if opt.blacklist:
+        with open(opt.blacklist, 'r') as f:
             opt.blacklist = f.read().splitlines()
-    else:
-        opt.blacklist = None
+    # else:
+    #     opt.blacklist = None
 
     s = select_videos(opt)
 
     if opt.check:
         stat(s)
-        print('------------------------------')
+        print('-'*50)
         print('labels:', list(s.keys()))
         print('blacklist:', opt.blacklist)
         print('# of classes:', len(s.keys()))
@@ -134,7 +138,9 @@ if __name__ == '__main__':
         a = make_annotation(s)
 
         print('annotation file (json) has been generated')
-        print('-'*60)
+        print('-'*50)
+        print('labels:', list(a['labels']))
+        print('blacklist:', opt.blacklist)
         print('# of classes:', len(a['labels']))
         print('# of instances:', len(a['database']))
 
