@@ -15,6 +15,8 @@ output_topk=$n_classes
 inference_batch_size=1
 inference_subset=test
 
+mkdir -p $root_path/$result_path
+
 # eval topn prob.
 python3 main.py \
     --root_path $root_path \

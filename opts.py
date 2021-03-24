@@ -214,7 +214,7 @@ def parse_opts():
                         default=10,
                         type=int,
                         help='Trained model is saved at every this epochs.')
-    parser.add_argument('--remove_before_checkpoint'
+    parser.add_argument('--remove_before_checkpoint',
                         action='store_true',
                         help='If true, the latest checkpoint remains.')
     parser.add_argument(
