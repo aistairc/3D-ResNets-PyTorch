@@ -87,7 +87,8 @@ if [ $is_scratch = yes ]; then
 	--model_depth $model_depth \
 	--batch_size $batch_size \
 	--n_threads $n_threads \
-	--checkpoint $checkpoint
+	--checkpoint $checkpoint \
+	--remove_before_checkpoint
 else
     # fine-tuning
     python3 main.py \
@@ -104,7 +105,8 @@ else
 	--model_depth $model_depth \
 	--batch_size $batch_size \
 	--n_threads $n_threads \
-	--checkpoint $checkpoint
+	--checkpoint $checkpoint \
+	--remove_before_checkpoint
 fi
 
 t_train=$SECONDS

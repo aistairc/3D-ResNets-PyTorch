@@ -391,6 +391,11 @@ def main_worker(index, opt):
                 save_checkpoint(save_file_path, i, opt.arch, model, optimizer,
                                 scheduler)
 
+                before_checkpoint = i - opt.checkpoint
+                if opt.remove_before_checkpoint and before_checkpoint > 0:                    
+                    before_checkpoint_path = opt.result_path / 'save_{}.pth'.format(before_checkpoint)
+                    os.remove(before_checkpoint_path)
+
         if not opt.no_val:
             prev_val_loss = val_epoch(i, val_loader, model, criterion,
                                       opt.device, val_logger, tb_writer,
