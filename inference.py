@@ -82,4 +82,4 @@ def inference(data_loader, model, result_path, class_names, no_average,
                 })
 
     with result_path.open('w') as f:
-        json.dump(inference_results, f)
+        json.dump(inference_results, f, indent=4)

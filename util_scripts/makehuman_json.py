@@ -123,7 +123,8 @@ if __name__ == '__main__':
 
     if opt.check:
         stat(s)
-        print('------------------------------')
+        print()
+        print('-'*50)
         print('labels:', list(s.keys()))
         print('blacklist:', opt.blacklist)
         print('# of classes:', len(s.keys()))
@@ -134,7 +135,7 @@ if __name__ == '__main__':
         a = make_annotation(s)
 
         print('annotation file (json) has been generated')
-        print('-'*60)
+        print('-'*50)
         print('# of classes:', len(a['labels']))
         print('# of instances:', len(a['database']))
 

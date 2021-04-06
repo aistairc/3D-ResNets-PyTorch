@@ -403,8 +403,12 @@ def main_worker(index, opt):
 
     if opt.inference:
         inference_loader, inference_class_names = get_inference_utils(opt)
-        inference_result_path = opt.result_path / '{}.json'.format(
-            opt.inference_subset)
+        if opt.inference_no_average:
+            inference_result_path = opt.result_path / '{}_{}.json'.format(
+                opt.inference_subset, 'no_average')
+        else:
+            inference_result_path = opt.result_path / '{}.json'.format(
+                opt.inference_subset)
 
         inference.inference(inference_loader, model, inference_result_path,
                             inference_class_names, opt.inference_no_average,

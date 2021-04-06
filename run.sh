@@ -1,5 +1,6 @@
 #!/bin/bash
-root_path=$SGE_LOCALDIR/data
+#root_path=$SGE_LOCALDIR/data
+root_path=data
 video_path=makehuman_videos/jpg
 annotation_path=makehuman.json
 result_path=results
@@ -15,7 +16,8 @@ model_depth=34
 batch_size=128
 n_threads=4
 checkpoint=5
-resume_path=$root_path/results/save_200.pth
+# resume_path=$root_path/results/save_200.pth
+resume_path=$result_path/save_200.pth
 output_topk=5
 inference_batch_size=1
 
@@ -32,7 +34,8 @@ log_dst=$log_path/log_$timestamp
 mkdir -p $result_dst
 mkdir -p $log_path
 # unpack
-tar -jxvf $dataset_src -C $SGE_LOCALDIR > /dev/null
+#tar -jxvf $dataset_src -C $SGE_LOCALDIR > /dev/null
+tar -jxvf $dataset_src
 n_classes=`python3 util_scripts/makehuman_json.py --root $root_path --get_n_classes`
 # (option) mocap_labels
 if [ -z $mocap_labels ]; then
@@ -44,7 +47,7 @@ if [ -z $backlist ]; then
 fi
 # generate annotation file
 python3 util_scripts/makehuman_json.py --root $root_path
-cp $root_path/$annotation_path $result_dst
+# cp $root_path/$annotation_path $result_dst
 mkdir -p $root_path/$result_path
 mkdir -p $root_path/$model_path
 cp $pretrain_src $root_path/$model_path
@@ -79,20 +82,6 @@ echo "------------------" >> $log_dst
 echo "unpack: $SECONDS" >> $log_dst
 
 # scratch
-python3 main.py \
-    --root_path $root_path \
-    --video_path $video_path \
-    --annotation_path $annotation_path \
-    --result_path $result_path \
-    --dataset $dataset \
-    --n_classes $n_classes \
-    --model $model \
-    --model_depth $model_depth \
-    --batch_size $batch_size \
-    --n_threads $n_threads \
-    --checkpoint $checkpoint
-
-# fine-tuning
 # python3 main.py \
 #     --root_path $root_path \
 #     --video_path $video_path \
@@ -100,14 +89,28 @@ python3 main.py \
 #     --result_path $result_path \
 #     --dataset $dataset \
 #     --n_classes $n_classes \
-#     --n_pretrain_classes $n_pretrain_classes \
-#     --pretrain_path $pretrain_path \
-#     --ft_begin_module $ft_begin_module \
 #     --model $model \
 #     --model_depth $model_depth \
 #     --batch_size $batch_size \
 #     --n_threads $n_threads \
-#     --checkpoint $checkpoint #--no_cuda
+#     --checkpoint $checkpoint
+
+# fine-tuning
+python3 main.py \
+    --root_path $root_path \
+    --video_path $video_path \
+    --annotation_path $annotation_path \
+    --result_path $result_path \
+    --dataset $dataset \
+    --n_classes $n_classes \
+    --n_pretrain_classes $n_pretrain_classes \
+    --pretrain_path $pretrain_path \
+    --ft_begin_module $ft_begin_module \
+    --model $model \
+    --model_depth $model_depth \
+    --batch_size $batch_size \
+    --n_threads $n_threads \
+    --checkpoint $checkpoint #--no_cuda
 
 echo "eval 1: $SECONDS" >> $log_dst
 
@@ -140,10 +143,10 @@ python3 -m util_scripts.eval_accuracy \
     --ignore \
     --save
 
-echo "copy result: $SECONDS" >> $log_dst
+# echo "copy result: $SECONDS" >> $log_dst
 
 # copy LOCALDIR to HOME
-cp $root_path/$result_path/* $result_dst
+# cp $root_path/$result_path/* $result_dst
 # cp $root_path/$annotation_path $result_dst
 
 echo "total: $SECONDS" >> $log_dst
