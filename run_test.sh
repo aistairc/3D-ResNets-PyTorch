@@ -1,20 +1,15 @@
 #!/bin/bash
-# test options
 root_path=data
 video_path=makehuman_videos/jpg
-#annotation_path=makehuman.json
-#result_path=results/result_$JOB_ID
-#result_path=results/result_6774073
 dataset=makehuman
 model=resnet
 model_depth=34
 batch_size=128
-n_threads=`cat /proc/cpuinfo | grep processsor | wc -l`
+n_threads=`cat /proc/cpuinfo | grep processor | wc -l`
 n_classes=31
 #resume_path=results/result_6686170/save_200.pth  # ft (fc)
 #resume_path=results/result_6774073/save_200.pth  # ft (layer1)
-#resume_path=results/result_6774870/save_200.pth  # ft (conv1)
-resume_path=results/result_6698300/save_200.pth  # scratch
+resume_path=results/result_6774870/save_200.pth  # ft (conv1)
 result_path=`dirname $resume_path`
 annotation_path=$result_path/makehuman.json
 output_topk=$n_classes
