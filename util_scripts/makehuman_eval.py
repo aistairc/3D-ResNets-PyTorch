@@ -96,8 +96,7 @@ class MakeHumanResults:
         ax.set_ylabel('true label')
         ax.set_yticks(range(n))
         ax.set_yticklabels(labels, fontsize=9)
-        cbar = fig.colorbar(im, ax=ax)
-        cbar.ax.set_ylabel('accuracy')
+        fig.colorbar(im, ax=ax)
         fig.tight_layout()
         
         if output:
