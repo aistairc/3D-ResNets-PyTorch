@@ -6,9 +6,12 @@ import pprint
 import time
 
 
-def make_annotation(labels):
+def make_annotation(labels, data_split=None, class_labels=None):
     ret = {'labels': None, 'database': {}}
-    ret['labels'] = list(labels.keys())
+    if class_labels is None:
+        ret['labels'] = list(labels.keys())
+    else:
+        ret['labels'] = class_labels
 
     for label, paths in labels.items():
         num_inst = len(paths)
@@ -21,12 +24,15 @@ def make_annotation(labels):
             *_, end_frame = inst_id.split('-end')
             end_frame = int(end_frame)
 
-            if i < num_train:
-                subset = 'training'
-            elif i < num_train + num_valid:
-                subset = 'validation'
+            if data_split is None:
+                if i < num_train:
+                    subset = 'training'
+                elif i < num_train + num_valid:
+                    subset = 'validation'
+                else:
+                    subset = 'testing'
             else:
-                subset = 'testing'
+                subset = data_split
 
             inst = {
                 inst_id: {
@@ -93,6 +99,9 @@ def get_opts():
     p.add_argument('--blacklist', type=str, default=None)
     p.add_argument('--check', action='store_true')
     p.add_argument('--get_n_classes', action='store_true')
+    p.add_argument('--filename', type=str, default=None)
+    p.add_argument('--data_split', type=str, default=None, help='(training|validation|testing)')
+    p.add_argument('--class_labels', type=str, default=None)
     return p.parse_args()
 
 
@@ -132,14 +141,23 @@ if __name__ == '__main__':
     elif opt.get_n_classes:
         print(len(s.keys()))
     else:
-        a = make_annotation(s)
+        if opt.class_labels:
+            with open(opt.class_labels, 'r') as f:
+                class_labels = json.load(f)
+            a = make_annotation(s, opt.data_split, class_labels['labels'])
+        else:
+            a = make_annotation(s, opt.data_split)
 
         print('annotation file (json) has been generated')
         print('-'*50)
         print('# of classes:', len(a['labels']))
         print('# of instances:', len(a['database']))
 
-        dst = os.path.join(opt.root, opt.dataset + '.json')
+        if opt.filename:
+            dst = os.path.join(opt.root, opt.filename)
+        else:
+            dst = os.path.join(opt.root, opt.dataset + '.json')
+            
         with open(dst, 'w') as f:
             json.dump(a, f, indent=4)
         print('filepath:', os.path.abspath(dst))
