@@ -102,6 +102,7 @@ def get_opts():
     p.add_argument('--filename', type=str, default=None)
     p.add_argument('--data_split', type=str, default=None, help='(training|validation|testing)')
     p.add_argument('--class_labels', type=str, default=None)
+    p.add_argument('--quiet', action='store_true')
     return p.parse_args()
 
 
@@ -148,11 +149,6 @@ if __name__ == '__main__':
         else:
             a = make_annotation(s, opt.data_split)
 
-        print('annotation file (json) has been generated')
-        print('-'*50)
-        print('# of classes:', len(a['labels']))
-        print('# of instances:', len(a['database']))
-
         if opt.filename:
             dst = os.path.join(opt.root, opt.filename)
         else:
@@ -160,5 +156,11 @@ if __name__ == '__main__':
             
         with open(dst, 'w') as f:
             json.dump(a, f, indent=4)
-        print('filepath:', os.path.abspath(dst))
-        print()
+
+        if not opt.quiet:
+            print('annotation file (json) has been generated')
+            print('-'*50)
+            print('# of classes:', len(a['labels']))
+            print('# of instances:', len(a['database']))
+            print('filepath:', os.path.abspath(dst))
+            print()
